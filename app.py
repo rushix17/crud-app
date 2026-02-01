@@ -18,6 +18,18 @@ CORS(app)
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 mongo = PyMongo(app)
 
+@app.route("/health")
+def health():
+    try:
+        uri = os.environ.get("MONGO_URI")
+        return {
+            "status": "ok",
+            "mongo_uri_exists": uri is not None,
+            "mongo_uri_preview": uri[:30] if uri else "NONE"
+        }
+    except Exception as e:
+        return {"error": str(e)}, 500
+
 # ---------------- API ROUTES ----------------
 
 @app.route("/tasks", methods=["GET"])
